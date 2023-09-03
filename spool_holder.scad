@@ -3,6 +3,7 @@
 footprint_width_narrow = 181;
 footprint_length_narrow = 221.5;
 profile_width = 10;
+base_thickness = 2;
 
 module tray_half_profile() {
   /*
@@ -54,19 +55,41 @@ module tray_corner() {
 }
 
 module tray() {
+  X = 181;
+  Y = 221.5;
   // long sides
-  translate([0,221.5/2-profile_width,0])
+  translate([0,Y/2-profile_width,0])
     rotate([90,0,0])
-      linear_extrude(221.5 - profile_width*2)
-        tray_profile( 181);
+      linear_extrude(Y - profile_width*2)
+        tray_profile( X);
 
   // short sides
-  translate([-181/2+profile_width,0,0])
+  translate([-(X/2-profile_width),0,0])
     rotate([90,0,90])
-      linear_extrude(181 - profile_width*2)
-        tray_profile( 221.5);
-}
+      linear_extrude(X - profile_width*2)
+        tray_profile( Y);
 
-tray_corner();
+  // corners
+  Xc = X/2-profile_width;
+  Yc = Y/2-profile_width;
+  translate([Xc,Yc,0])
+    tray_corner();
+
+  translate([-Xc,Yc,0])
+    mirror([1,0,0])
+      tray_corner();
+
+  translate([Xc,-Yc,0])
+    mirror([0,1,0])
+      tray_corner();
+
+  translate([-Xc,-Yc,0])
+    mirror([1,1,0])
+      tray_corner();
+
+  // base
+  translate([0,0,base_thickness/2])
+    cube([Xc*2,Yc*2,base_thickness], center=true);
+}
 
 tray();

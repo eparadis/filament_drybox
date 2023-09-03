@@ -74,6 +74,13 @@ module spool(center_height=100) {
   }
 }
 
+module copy_corners() {
+  children(); 
+  mirror([0,1,0]) children();
+  mirror([1,0,0]) children();
+  mirror([0,1,0]) mirror([1,0,0]) children();
+}
+
 module rollers(height=0) {
   seperation = 100; // front-to-back distance
   roller_hub_dia = 20;
@@ -87,6 +94,7 @@ module rollers(height=0) {
   echo(str("hub_center_height is ", hub_center_height));
 
   module roller() {
+    ID = 5;
     translate([seperation/2, 65/2, height])
       rotate([90,0,0]) 
         difference() {
@@ -95,23 +103,50 @@ module rollers(height=0) {
             translate([0,0,4]) cylinder(d=25, h=3, center=true);
             translate([0,0,-4]) cylinder(d=25, h=3, center=true);
           }
-          cylinder(d=10, h=12, center=true);
+          cylinder(d=ID, h=12, center=true);
         }
   }
 
   // put one in each corner
-  roller(); 
-  mirror([0,1,0]) roller();
-  mirror([1,0,0]) roller();
-  mirror([0,1,0]) mirror([1,0,0]) roller();
+  copy_corners() roller(); 
 }
 
-//tray(
-//  X = footprint_width_narrow,
-//  Y = footprint_length_narrow
-//);
+module supports() {
 
-color("blue")
-spool(118);
-color("yellow")
-rollers(height=20);
+  module support(r_sep=100, r_ht=20) {
+    W = 5;
+    gap = 0.2;
+    base_height = 3;
+    dia = 5;
+    difference() {
+      union() {
+        translate([r_sep/2, 65/2+(5.5+W/2+gap), base_height])
+          prismoid(size1=[30,W], size2=[20,W], h=r_ht+10-base_height);
+        translate([r_sep/2, 65/2-(5.5+W/2+gap), base_height])
+          prismoid(size1=[30,W], size2=[20,W], h=r_ht+10-base_height);
+      }
+      translate([r_sep/2, 65/2, r_ht])
+        rotate([90,0,0])
+          cylinder(d=dia, h=30, center=true);
+    }
+    cube([r_sep/2+15, 65/2+(5.5+W+gap), base_height]);
+  }
+
+  copy_corners() support();
+
+}
+
+module spool_holder() {
+  %color("blue") spool(118);
+  color("yellow") rollers(height=20);
+  color("red") supports();
+}
+
+%rotate([0,0,90])
+tray(
+  X = footprint_width_narrow,
+  Y = footprint_length_narrow
+);
+
+translate([0,42,0]) spool_holder();
+translate([0,-42,0]) spool_holder();

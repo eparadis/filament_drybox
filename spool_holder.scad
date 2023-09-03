@@ -55,8 +55,25 @@ module tray(X, Y) {
     rect([Xi,Yi], rounding=0, chamfer=0);
 }
 
-tray(
-  X = footprint_width_narrow,
-  Y = footprint_length_narrow
-);
+module spool(center_height=100) {
+  // modeled after the hatchbox PLA 1kg spools I use
+  translate([0,67.78/2,center_height])
+  rotate([90,0,0])
+  difference() {
+    union() {
+      cylinder(d=60,h=67.78);
+      cylinder(d=200, h=3);
+      translate([0,0,67.78-3])
+        cylinder(d=200, h=3);
+    }
+    cylinder(d=54.75, h=67.78);
+  }
+}
+
+//tray(
+//  X = footprint_width_narrow,
+//  Y = footprint_length_narrow
+//);
+
+spool();
 

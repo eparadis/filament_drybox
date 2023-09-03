@@ -68,6 +68,42 @@ module spool(center_height=100) {
     }
     cylinder(d=54.75, h=67.78);
   }
+
+  if((center_height+100) > 234) {
+    echo("WARNING!!! spool is too high and will not fit inside box!");
+  }
+}
+
+module rollers(height=0) {
+  seperation = 100; // front-to-back distance
+  roller_hub_dia = 20;
+  spool_rim_dia = 200;
+  cen_to_cen_dist = (roller_hub_dia + spool_rim_dia) / 2;
+  
+  // the angle at the spool center between lines to the center of the two rollers
+  spread_angle = asin(seperation/2 / cen_to_cen_dist) * 2;
+  echo(str("roller spread angle is ", spread_angle));
+  hub_center_height = cos(spread_angle/2) * cen_to_cen_dist + height;
+  echo(str("hub_center_height is ", hub_center_height));
+
+  module roller() {
+    translate([seperation/2, 65/2, height])
+      rotate([90,0,0]) 
+        difference() {
+          union() {
+            cylinder(d=roller_hub_dia, h=5, center=true);
+            translate([0,0,4]) cylinder(d=25, h=3, center=true);
+            translate([0,0,-4]) cylinder(d=25, h=3, center=true);
+          }
+          cylinder(d=10, h=12, center=true);
+        }
+  }
+
+  // put one in each corner
+  roller(); 
+  mirror([0,1,0]) roller();
+  mirror([1,0,0]) roller();
+  mirror([0,1,0]) mirror([1,0,0]) roller();
 }
 
 //tray(
@@ -75,5 +111,7 @@ module spool(center_height=100) {
 //  Y = footprint_length_narrow
 //);
 
-spool();
-
+color("blue")
+spool(118);
+color("yellow")
+rollers(height=20);

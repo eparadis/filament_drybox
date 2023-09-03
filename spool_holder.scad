@@ -1,5 +1,7 @@
 // a filament spool holder to fit inside a snapware food container
 
+include <BOSL2/std.scad>
+
 footprint_width_narrow = 181;
 footprint_length_narrow = 221.5;
 profile_width = 10;
@@ -54,9 +56,7 @@ module tray_corner() {
       tray_half_profile();
 }
 
-module tray() {
-  X = 181;
-  Y = 221.5;
+module tray(X, Y) {
   // long sides
   translate([0,Y/2-profile_width,0])
     rotate([90,0,0])
@@ -92,4 +92,30 @@ module tray() {
     cube([Xc*2,Yc*2,base_thickness], center=true);
 }
 
-tray();
+module b_tray(X, Y) {
+  Xi = X - 2*profile_width;
+  Yi = Y - 2*profile_width;
+
+  // it's worth noting you can provide values for chamfer and rounding
+  path = rect([Xi,Yi], rounding=0, chamfer=0);
+
+  path_extrude2d(path, caps=false, closed=true) {
+    tray_half_profile();
+  }
+
+  // base
+  linear_extrude(height=base_thickness)
+    rect([Xi,Yi], rounding=0, chamfer=0);
+}
+
+tray(
+  X = footprint_width_narrow,
+  Y = footprint_length_narrow
+);
+
+translate([0,0,20])
+color("yellow")
+b_tray(
+  X = footprint_width_narrow,
+  Y = footprint_length_narrow
+);

@@ -7,6 +7,8 @@ footprint_length_narrow = 221.5;
 profile_width = 10;
 base_thickness = 2;
 
+$fn=128;
+
 module tray_half_profile() {
   /*
      D
@@ -99,9 +101,9 @@ module rollers(height=0) {
       rotate([90,0,0]) 
         difference() {
           union() {
-            cylinder(d=roller_hub_dia, h=5, center=true);
-            translate([0,0,4]) cylinder(d=25, h=3, center=true);
-            translate([0,0,-4]) cylinder(d=25, h=3, center=true);
+            cylinder(d=roller_hub_dia, h=4, center=true);
+            translate([0,0,3]) cylinder(d=25, h=2, center=true);
+            translate([0,0,-3]) cylinder(d=25, h=2, center=true);
           }
           cylinder(d=ID, h=12, center=true);
         }
@@ -112,41 +114,60 @@ module rollers(height=0) {
 }
 
 module supports() {
-
-  module support(r_sep=100, r_ht=20) {
-    W = 5;
+  r_sep = 100;
+  module support(r_ht=20) {
+    W = 4;
     gap = 0.2;
-    base_height = 3;
+    base_height = 2;
     dia = 5;
     difference() {
       union() {
-        translate([r_sep/2, 65/2+(5.5+W/2+gap), base_height])
-          prismoid(size1=[30,W], size2=[20,W], h=r_ht+10-base_height);
-        translate([r_sep/2, 65/2-(5.5+W/2+gap), base_height])
-          prismoid(size1=[30,W], size2=[20,W], h=r_ht+10-base_height);
+        translate([r_sep/2, 65/2+(4+W/2+gap), 0])
+          prismoid(size1=[30,W], size2=[20,W], h=r_ht+5);
+        // translate([r_sep/2, 65/2-(4+W/2+gap), base_height])
+        //   prismoid(size1=[30,W], size2=[20,W], h=r_ht+5-base_height);
       }
       translate([r_sep/2, 65/2, r_ht])
         rotate([90,0,0])
-          cylinder(d=dia, h=30, center=true);
+          hull() {
+            cylinder(d=dia, h=30, center=true);
+            translate([0,10,0]) cylinder(d=dia, h=30, center=true);
+          }
     }
-    cube([r_sep/2+15, 65/2+(5.5+W+gap), base_height]);
+    translate([r_sep/2-15, 65/2-15+4+gap+4, 3]) {
+      difference() {
+        cube([30,15,4], center=false);
+        translate([15,5,0]) cylinder(d=2.9, h=5);
+      }
+    }
   }
 
   copy_corners() support();
-
+  // translate([r_sep/2,0,1.5]) cube([30, 65+8+8+.4, 3], center=true);
+  path = turtle([ "left",90, "move",10, "right", 90,
+    "move", 10, "arcleft", 10, "move",65/2-15+4+0.2+4-20+0.9, "arcright",10,
+    "move", r_sep/2-30+15, "right",90, "move", 10, "arcright",10, "move",10, "arcleft",10,
+    "untily", 0, "right",90, "untilx", 0
+    ]);
+  difference() {
+    translate([0,0,-0.1]) copy_corners() linear_extrude(height = 3) polygon(path);
+    copy_corners() translate([r_sep/2-15, 65/2-15+4+0.2+4, -3]) translate([15,5,0]) cylinder(d=2.9, h=10);
+  }
+  // stroke(path);
 }
 
 module spool_holder() {
-  %color("blue") spool(118);
+  // %color("blue") spool(118);
   color("yellow") rollers(height=20);
   color("red") supports();
 }
 
-%rotate([0,0,90])
-tray(
-  X = footprint_width_narrow,
-  Y = footprint_length_narrow
-);
+// %rotate([0,0,90])
+// tray(
+//   X = footprint_width_narrow,
+//   Y = footprint_length_narrow
+// );
 
-translate([0,42,0]) spool_holder();
-translate([0,-42,0]) spool_holder();
+// translate([0,40,0]) spool_holder();
+// mirror([0,1,0]) translate([0,40,0]) 
+spool_holder();

@@ -176,7 +176,7 @@ module supports() {
   }
   // stroke(path);
 }
-scale([1, 1, 1]) 
+
 module spool_holder() {
   %color("blue") spool(118);
   rollers(height=20);

@@ -176,9 +176,9 @@ module supports() {
   }
   // stroke(path);
 }
-
+scale([1, 1, 1]) 
 module spool_holder() {
-  // %color("blue") spool(118);
+  %color("blue") spool(118);
   rollers(height=20);
   supports();
 }
@@ -189,6 +189,6 @@ module spool_holder() {
 //   Y = footprint_length_narrow
 // );
 
-// translate([0,40,0]) spool_holder();
-// mirror([0,1,0]) translate([0,40,0]) 
+translate([0,42,0]) spool_holder();
+mirror([0,1,0]) translate([0,42,0]) 
 spool_holder();

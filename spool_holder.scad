@@ -110,7 +110,7 @@ module rollers(height=0) {
   }
 
   // put one in each corner
-  copy_corners() roller(); 
+  copy_corners() color("yellow") roller();
 }
 
 module supports() {
@@ -138,19 +138,31 @@ module supports() {
       difference() {
         cube([30,15,4], center=false);
         translate([15,5,0]) cylinder(d=2.9, h=5);
+        translate([15,5,2]) cylinder(d=6.0, h=5);
       }
     }
   }
 
-  copy_corners() support();
+  copy_corners() color("green") support();
   // translate([r_sep/2,0,1.5]) cube([30, 65+8+8+.4, 3], center=true);
-  path = turtle([ "left",90, "move",10, "right", 90,
-    "move", 10, "arcleft", 10, "move",65/2-15+4+0.2+4-20+0.9, "arcright",10,
-    "move", r_sep/2-30+15, "right",90, "move", 10, "arcright",10, "move",10, "arcleft",10,
-    "untily", 0, "right",90, "untilx", 0
-    ]);
+  // path = turtle([ "left",90, "move",10, "right", 90,
+    // "move", 10, "arcleft", 10,90, "move",65/2-15+4+0.2+4-20+0.9, "arcright",10,90,
+    //"move", r_sep/2-30+15, "right",90, "move", 10, "arcright",10, "move",10, "arcleft",10,
+    //"untily", 0, "right",90, "untilx", 0
+    // ]);
+  path = turtle([ "move",10 , "right", 90, "move", 30,
+    "arcleft", 10,60, "untily",5, "arcleft",10,30,
+    "right",90, "untilx",0,
+    "right",90, "move", 10,
+    "right",90, "arcleft",10,60,
+    "untily", 65/2-1+0.2,
+    "arcright",10,60, "untilx", r_sep/2+15
+  ], state=[  [[r_sep/2+15, 65/2+2+1.5]], [0,-1], 90, 0]); // [  [[0,0]], [1,0], 90, 0]
+  color("red")
+  translate([0,0,-4])
   difference() {
-    translate([0,0,-0.1]) copy_corners() linear_extrude(height = 3) polygon(path);
+    copy_corners() linear_extrude(height = 3) polygon(path);
+    // a hole to screw the vertical portions down
     copy_corners() translate([r_sep/2-15, 65/2-15+4+0.2+4, -3]) translate([15,5,0]) cylinder(d=2.9, h=10);
   }
   // stroke(path);
@@ -158,8 +170,8 @@ module supports() {
 
 module spool_holder() {
   // %color("blue") spool(118);
-  color("yellow") rollers(height=20);
-  color("red") supports();
+  rollers(height=20);
+  supports();
 }
 
 // %rotate([0,0,90])

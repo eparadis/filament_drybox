@@ -122,9 +122,9 @@ module rollers(height=0) {
   copy_corners() color("yellow") v_roller();
 }
 
-module supports() {
+module supports(roller_height=20) {
   r_sep = 100;
-  module support(r_ht=20) {
+  module support(r_ht=roller_height) {
     W = 4;
     gap = 0.2;
     base_height = 2;
@@ -179,8 +179,8 @@ module supports() {
 
 module spool_holder() {
   %color("blue") spool(118);
-  rollers(height=20);
-  supports();
+  rollers(height=21);
+  supports(roller_height=21);
 }
 
 // %rotate([0,0,90])

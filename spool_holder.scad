@@ -109,8 +109,17 @@ module rollers(height=0) {
         }
   }
 
+  module v_roller() {
+    path = [
+      [5/2,-4], [25/2,-4], [20/2,0], [25/2,4], [5/2,4]
+    ];
+    translate([seperation/2, 65/2, height])
+      rotate([90,0,0]) 
+        rotate_extrude(convexity=10) polygon(path);
+  }
+
   // put one in each corner
-  copy_corners() color("yellow") roller();
+  copy_corners() color("yellow") v_roller();
 }
 
 module supports() {
